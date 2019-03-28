@@ -6,6 +6,7 @@ import { store, useStore, inject } from '../lib';
 
 @store
 class GlobalStore2 {
+    // This will be constructed as singleton
     @observable test2 = '2';
     @action changeTest2 = () => {
         this.test2 = this.test2 === '2' ? '1' : '2';
@@ -14,6 +15,7 @@ class GlobalStore2 {
 
 @store
 class GlobalStore {
+    // This will be constructed as singleton
     @observable test = '1';
     @action changeTest1 = () => {
         this.test = this.test === '1' ? '2' : '1';
@@ -59,7 +61,6 @@ function useWatchStore1Change() {
 function Root() {
     useWatchStore1Change();
     const store = useStore(GlobalStore);
-    console.log(store);
     return useObserver(() => (
         <>
             <div>{store.store2.test2}</div>
