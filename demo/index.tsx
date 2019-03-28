@@ -20,7 +20,7 @@ class GlobalStore {
     @action changeTest1 = () => {
         this.test = this.test === '1' ? '2' : '1';
     };
-    @inject store2!: GlobalStore2;
+    @inject store2!: GlobalStore2; // Injected will be singleton as well
     @computed get testTotal() {
         return this.test + this.store2.test2;
     }
