@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { observable, action, observe, computed } from 'mobx';
 import { useObserver } from 'mobx-react-lite';
 import { store, useStore, inject } from '../lib';
+import { observer } from 'mobx-react'
 
 @store
 class GlobalStore2 {
