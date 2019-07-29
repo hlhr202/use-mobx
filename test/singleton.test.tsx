@@ -1,11 +1,10 @@
-import { store, instantiate, useStore } from '../lib';
+import { instantiate } from '../lib';
 import { observable, action } from 'mobx';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import ReactDOM from 'react-dom';
 
-@store
 class TestStore {
     @observable testData = '1';
     @action changeTestData = () => {
@@ -16,7 +15,7 @@ class TestStore {
 describe('Test singleton', () => {
     it('Created singleton instance', () => {
         const instance = instantiate(TestStore);
-        expect(TestStore).toHaveProperty('instance', instance);
+        expect(TestStore).toHaveProperty('_$$instance', instance);
     });
 
     it('Has singleton instance', () => {
@@ -25,14 +24,14 @@ describe('Test singleton', () => {
         expect(instance1).toBe(instance2);
     });
 
-    it('Create singleton context', () => {
-        const context = (TestStore as any).context;
-        expect(context).toBe((TestStore as any)._context);
-    });
+    // it('Create singleton context', () => {
+    //     const context = (TestStore as any).context;
+    //     expect(context).toBe((TestStore as any)._context);
+    // });
 
     it('Can be used as singleton context', () => {
         function Component1() {
-            const store = useStore(TestStore);
+            const store = instantiate(TestStore);
             return useObserver(() => (
                 <>
                     <div>{store.testData}</div>
@@ -42,7 +41,7 @@ describe('Test singleton', () => {
         }
 
         function Component2() {
-            const store = useStore(TestStore);
+            const store = instantiate(TestStore);
             return useObserver(() => (
                 <>
                     <div>{store.testData}</div>

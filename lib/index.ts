@@ -1,50 +1,36 @@
-import * as React from 'react';
 import 'reflect-metadata';
 
 export interface IDecoratedConstructor<T> {
-    new (...args: any[]): T;
-    _instance?: T;
-    _context?: React.Context<T | undefined>;
-    instance?: T;
-    context?: React.Context<T>;
+    new (...args: any): T;
+    _$$instance?: T;
+    // $$instance?: T;
 }
 
-export function store<T>(storeConstructor: IDecoratedConstructor<T>) {
-    Object.defineProperties(storeConstructor, {
-        instance: {
-            get: () => {
-                if (!storeConstructor._instance) {
-                    storeConstructor._instance = new storeConstructor();
-                }
-                return storeConstructor._instance;
-            },
-            set: () => {},
-            enumerable: true,
-            configurable: true,
-        },
-        context: {
-            get: () => {
-                if (!storeConstructor._context) {
-                    storeConstructor._context = React.createContext(
-                        storeConstructor.instance,
-                    );
-                }
-                return storeConstructor._context;
-            },
-            set: () => {},
-            enumerable: true,
-            configurable: true,
-        },
-    });
-    return storeConstructor;
-}
+// export function store<T>(storeConstructor: IDecoratedConstructor<T>) {
+//     Object.defineProperties(storeConstructor, {
+//         $$instance: {
+//             get: () => {
+//                 if (!storeConstructor._$$instance) {
+//                     storeConstructor._$$instance = new storeConstructor();
+//                 }
+//                 return storeConstructor._$$instance;
+//             },
+//             set: () => {},
+//             enumerable: true,
+//             configurable: true,
+//         },
+//     });
+//     return storeConstructor;
+// }
 
-export function useStore<T>(storeConstructor: IDecoratedConstructor<T>) {
-    return React.useContext(storeConstructor.context!);
-}
-
-export function instantiate<T>(storeConstructor: IDecoratedConstructor<T>) {
-    return storeConstructor.instance!;
+export function instantiate<T>(
+    storeConstructor: IDecoratedConstructor<T>,
+    ...args: any[]
+) {
+    if (!storeConstructor._$$instance) {
+        storeConstructor._$$instance = new storeConstructor(...args);
+    }
+    return storeConstructor._$$instance!;
 }
 
 export const inject: PropertyDecorator = (target, propertyKey) => {

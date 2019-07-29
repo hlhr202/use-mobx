@@ -1,11 +1,10 @@
-import { store, instantiate, useStore, inject } from '../lib';
+import { instantiate, inject } from '../lib';
 import { observable, action } from 'mobx';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import ReactDOM from 'react-dom';
 
-@store
 class TestStore1 {
     @observable testData = '1';
     @action changeTestData = () => {
@@ -16,7 +15,6 @@ class TestStore1 {
     };
 }
 
-@store
 class TestStore2 {
     @observable testData = '1';
     @action changeTestData = () => {
@@ -44,7 +42,7 @@ describe('Test injection', () => {
 
     it('Injection reactive properly in functional component', () => {
         function Component() {
-            const store2 = useStore(TestStore2);
+            const store2 = instantiate(TestStore2);
             return useObserver(() => (
                 <>
                     <button onClick={store2.store1.changeTestData}>Test</button>

@@ -2,10 +2,8 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { observable, action, observe, computed } from 'mobx';
 import { useObserver } from 'mobx-react-lite';
-import { store, useStore, inject } from '../lib';
-import { observer } from 'mobx-react'
+import { instantiate, inject } from '../lib';
 
-@store
 class GlobalStore2 {
     // This will be constructed as singleton
     @observable test2 = '2';
@@ -14,8 +12,7 @@ class GlobalStore2 {
     };
 }
 
-@store
-class GlobalStore {
+class GlobalStore1 {
     // This will be constructed as singleton
     @observable test = '1';
     @action changeTest1 = () => {
@@ -28,7 +25,7 @@ class GlobalStore {
 }
 
 function Root3() {
-    const store2 = useStore(GlobalStore2);
+    const store2 = instantiate(GlobalStore2);
     return useObserver(() => (
         <>
             <div>{store2.test2}</div>
@@ -38,7 +35,7 @@ function Root3() {
 }
 
 function Root2() {
-    const store = useStore(GlobalStore);
+    const store = instantiate(GlobalStore1);
     return useObserver(() => (
         <>
             <div>{store.test}</div>
@@ -48,7 +45,7 @@ function Root2() {
 }
 
 function useWatchStore1Change() {
-    const store = useStore(GlobalStore);
+    const store = instantiate(GlobalStore1);
     React.useEffect(() => {
         const dispose = observe(store, 'test', change => {
             if (change.type === 'update') {
@@ -56,12 +53,12 @@ function useWatchStore1Change() {
             }
         });
         return () => dispose();
-    });
+    }, [store]);
 }
 
 function Root() {
     useWatchStore1Change();
-    const store = useStore(GlobalStore);
+    const store = instantiate(GlobalStore1);
     return useObserver(() => (
         <>
             <div>{store.store2.test2}</div>
