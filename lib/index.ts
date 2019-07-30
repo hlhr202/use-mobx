@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-export interface IDecoratedConstructor<T> {
+export interface ISingletonConstructor<T> {
     new (...args: any): T;
     _$$instance?: T;
     // $$instance?: T;
@@ -24,13 +24,18 @@ export interface IDecoratedConstructor<T> {
 // }
 
 export function instantiate<T>(
-    storeConstructor: IDecoratedConstructor<T>,
+    storeConstructor: ISingletonConstructor<T>,
     ...args: any[]
 ) {
-    if (!storeConstructor._$$instance) {
-        storeConstructor._$$instance = new storeConstructor(...args);
+    const isServer = typeof window === 'undefined';
+    if (isServer) {
+        return new storeConstructor(...args);
+    } else {
+        if (!storeConstructor._$$instance) {
+            storeConstructor._$$instance = new storeConstructor(...args);
+        }
+        return storeConstructor._$$instance!;
     }
-    return storeConstructor._$$instance!;
 }
 
 export const inject: PropertyDecorator = (target, propertyKey) => {
